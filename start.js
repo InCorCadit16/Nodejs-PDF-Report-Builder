@@ -34,65 +34,48 @@ async function downloadPdf(requestBody) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
-  let template = requestBody.template;
-  template = fillTemplate(template, requestBody.data);
+  const content = fillTemplate(requestBody);
 
-  await page.setContent(template, { waitUntil: 'networkidle0' });
+  await page.setContent(content, { waitUntil: 'networkidle0' });
   const buffer = await page.pdf({format: 'A4', printBackground: true, pageRanges: '1-3'});
   
   await browser.close();
-  return buffer
+  return buffer;
 }
 
-function getTemplate() {
-  return new Promise((resolve, reject) => {
-    fs.readFile('C:/Users/alexandru.rosca/source/repos/nodejs-pdf-extractor/report.html', {encoding: 'utf-8'}, (err, data) => {
-      if (err) 
-        reject(err)
-      else
-        resolve(data)
-    })
-  })  
-}
-
-function fillTemplate(requestBody, collectionPrefix) {
+function fillTemplate(requestBody) {
 
   let template = requestBody.template;
   let data = requestBody.data;
 
   for (let property in data) {
-    if (property.hasOwnProperty('length')) {
-      
+    console.log(data)
+    if (typeof(data[property]) === 'object' && data[property].hasOwnProperty('length')) {
+      for (let i = 0; i < data[property].length; i++) {
+        if (typeof(data[property][i] === 'object')) {
+          for (let subproperty in data[property][i]) 
+            template = template.replace(`{{${cutLast(property) + capitalize(subproperty) + (i + 1)}}}`, data[property][i][subproperty]);
+        } else {
+          template = template.replace(`{{${cutLast(property) + (i + 1)}}}`, data[property][i])
+        }
+      }
+    } else if (typeof(data[property]) === 'object' && !data[property].hasOwnProperty('length')) {
+        for (let subproperty in data[property][i]) 
+          template = template.replace(`{{${cutLast(property) + capitalize(subproperty)}}}`, data[property][i][subproperty]);
     } else {
-      template = template.replace(`{{${property}}}`, template)
+      template = template.replace(`{{${property}}}`, data[property]);
     }
   }
 
-  template = template
-    .replace('{{chartImage}}', data.chartImage)
-    .replace('{{femaleAndNonbinaryMean}}', data.currency + data.femaleAndNonBinaryMean.toFixed(2))
-    .replace("{{maleMean}}", data.currency + data.maleMean.toFixed(2))
-    .replace("{{meanPayDifference}}", data.currency + data.meanPayDifference.toFixed(2))
-    .replace("{{meanPercentageDifference}}", (data.meanPercentageDifference * 100).toFixed(2))
-    .replace("{{impactOnEBIT}}", data.currency + data.impactOnEBIT.toFixed(2))
-    .replace("{{nonmaleStuffProportion}}", (data.nonmaleStuffProportion * 100).toFixed(2))
-    .replace("{{closingTimeUsual}}", data.closingPayGapUsusal.toFixed())
-    .replace("{{closingTimeAccelerated}}", data.closingPayGapAccelerated.toFixed())
-    .replace("{{country}}", data.country.name)
-    .replace("{{gdpRegionImpact}}", data.currency + data.regionGDPImpact.toFixed(2))
-    .replace("{{gdpRegionImpactPercents}}", data.regionGDPImpactPercents.toString())
-    .replace("{{gdpGlobalImpact}}", "$" +  data.globalGDPImpact.toFixed(2))
-    .replace("{{gdpGlobalImpactPercents}}", data.globalGDPImpactPercents.toString());
-
-  for (let i = 0; i < data.insightItems.length; i++)
-  {
-    template = template
-      .replace(`{{insightTitle${i + 1}}}`, data.insightItems[i].title)
-      .replace(`{{insightContent${i + 1}}}`, data.insightItems[i].content);
-  }
-
-  return template
+  return template;
 }
 
+function capitalize(value) {
+  return value.charAt(0) + value.substring(1);
+}
+
+function cutLast(value) {
+  return value.substring(0, value.length - 2);
+}
 
 
