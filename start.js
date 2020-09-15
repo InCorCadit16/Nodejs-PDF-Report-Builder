@@ -36,7 +36,7 @@ async function downloadPdf(requestBody) {
   const content = fillTemplate(requestBody);
 
   await page.setContent(content, { waitUntil: 'networkidle0' });
-  const buffer = await page.pdf({format: 'A4', printBackground: true, pageRanges: '1-3'});
+  const buffer = await page.pdf({format: 'A4', printBackground: true, margin: {top: 0, right: 0, bottom: 0, left: 0}});
   
   await browser.close();
   return buffer;
