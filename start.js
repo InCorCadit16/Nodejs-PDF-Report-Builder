@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer')
 const express = require('express')
 const bodyParser = require('body-parser')
-const fs = require('fs')
 
 const app = express();
 
@@ -44,24 +43,24 @@ async function downloadPdf(requestBody) {
 }
 
 function fillTemplate(requestBody) {
-
-  let template = requestBody.template;
-  let data = requestBody.data;
+  let template = requestBody.Template;
+  let data = requestBody.Data;
 
   for (let property in data) {
-    console.log(data)
     if (typeof(data[property]) === 'object' && data[property].hasOwnProperty('length')) {
       for (let i = 0; i < data[property].length; i++) {
-        if (typeof(data[property][i] === 'object')) {
-          for (let subproperty in data[property][i]) 
+        if (typeof(data[property][i]) === 'object') {
+          for (let subproperty in data[property][i]) {
             template = template.replace(`{{${cutLast(property) + capitalize(subproperty) + (i + 1)}}}`, data[property][i][subproperty]);
+          }
         } else {
           template = template.replace(`{{${cutLast(property) + (i + 1)}}}`, data[property][i])
         }
       }
     } else if (typeof(data[property]) === 'object' && !data[property].hasOwnProperty('length')) {
-        for (let subproperty in data[property][i]) 
-          template = template.replace(`{{${cutLast(property) + capitalize(subproperty)}}}`, data[property][i][subproperty]);
+        for (let subproperty in data[property]) {
+          template = template.replace(`{{${property + capitalize(subproperty)}}}`, data[property][subproperty]);
+        }
     } else {
       template = template.replace(`{{${property}}}`, data[property]);
     }
@@ -71,11 +70,11 @@ function fillTemplate(requestBody) {
 }
 
 function capitalize(value) {
-  return value.charAt(0) + value.substring(1);
+  return value.substring(0, 1).toUpperCase() + value.substring(1);
 }
 
 function cutLast(value) {
-  return value.substring(0, value.length - 2);
+  return value.substring(0, value.length - 1);
 }
 
 
