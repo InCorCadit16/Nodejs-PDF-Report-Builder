@@ -18,7 +18,6 @@ app.use(bodyParser.json({
 app.post('/api/pdf', async (req, res) => {
   const pdfReport = await downloadPdf(req.body);
  
-
   res.setHeader('Content-type', 'application/pdf');
   res.status(200);
   res.end(pdfReport);
@@ -30,7 +29,7 @@ app.listen(port, () => {
 })
 
 async function downloadPdf(requestBody) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({args: ['--no-sandbox']});
   const page = await browser.newPage();
 
   const content = fillTemplate(requestBody);
