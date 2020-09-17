@@ -1,6 +1,8 @@
 # Nodejs-PDF-Report-Builder
 
 * Usage
+* Getting started
+  * Troubleshooting
 * Endpoints
 * Query structure
   * Data formats
@@ -22,6 +24,18 @@
   **Important:** necessarily read the Limitations part of README, because this tool might not suite your requirements and using it will be a waste of time.
   
   **Note:** but also note that you have the source code (which is quite simple) and you can customize the tool in order to fit your expectations. 
+
+## Gettings started
+ After clonning repository run **npm install** to install all dependencies.
+ 
+ In orders to launch the project run **node start**.
+ 
+### Troubleshooting:
+ If project fails on start, it might be because of some dependencies where not installed (anyway, read the error description, but dependencies is the most frequent cause).
+ In this case run **npm install express**. Express might not install together will all dependencies, so you will need to install it mannualy with command written before.
+ 
+ If project fails on sending request, it might be because of [puppeteer](https://github.com/puppeteer/puppeteer) is not installed (this is one of the most important dependencies, which may not install after **npm install**). In this case install it manually with **npm install puppeteer**.
+ 
 
 ## Endpoints
 
