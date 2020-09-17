@@ -6,7 +6,7 @@
 * Endpoints
 * Query structure
   * Data formats
-    * Privitive values
+    * Primitive values
     * Objects
     * Arrays of primitives
     * Arrays of objects
