@@ -120,9 +120,13 @@ In some cases it's more convenient to send an array of values instead of many al
 **Note:** objects are not required to have same model (they might have different attributes and they will still be parsed).
   
 ## Template structure
+
+**Note:** you might define any width and height for you template. The only rule is to meet the same relation between width and height as an A4 page. An A4 page has size of 210x297mm. As for your template you might use width of 1124px and keep in mind that every page will have height 1589px. The main idea is to keep this relation between width and height and take into account how your template will be splitted in multiple pages PDF document.  
   
   Template is the html content of your report where all values are replaced by their variables names. There are a few rules to consider:
-    
+  
+
+  
   every variable name (which will be replace with value) must be in double curly braces like this: 
   
 ```html
